@@ -1,0 +1,100 @@
+buildscript {
+  ext {
+    spring_version = '2.1.6.RELEASE'
+    lombok_version = '1.18.8'
+    cucumber_version = '4.3.1'
+    cloud_wiremock_version = '2.1.3.RELEASE'
+    mockito_version = '2.28.2'
+    assertj_version = '3.13.2'
+    jupiter_version = '5.3.2'
+  }
+
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:$spring_version")
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+
+group = theGroup
+version = theVersion
+sourceCompatibility = theSourceCompatibility
+targetCompatibility = theTargetCompatibility
+
+mainClassName = 'com.starling.exercise.roundup.Application'
+
+bootJar {
+  baseName = theName
+  version = theVersion
+}
+
+repositories {
+  mavenCentral()
+}
+
+sourceSets {
+  acceptance {
+    compileClasspath += sourceSets.main.output
+    runtimeClasspath += sourceSets.main.output
+  }
+}
+
+idea {
+  module {
+    testSourceDirs += project.sourceSets.acceptance.java.srcDirs
+    testResourceDirs += project.sourceSets.acceptance.resources.srcDirs
+
+    outputDir file('build/classes/main')
+    testOutputDir file('build/classes/test')
+  }
+}
+
+configurations {
+  acceptanceImplementation.extendsFrom implementation
+  acceptanceImplementation.extendsFrom testImplementation
+}
+
+dependencies {
+  annotationProcessor "org.projectlombok:lombok:$lombok_version"
+
+  implementation "org.springframework.boot:spring-boot-starter-web"
+  implementation "org.projectlombok:lombok:$lombok_version"
+
+  testImplementation "org.mockito:mockito-core:$mockito_version"
+  testImplementation "org.mockito:mockito-junit-jupiter:$mockito_version"
+  testImplementation "org.assertj:assertj-core:$assertj_version"
+  testImplementation "org.springframework.boot:spring-boot-starter-test"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"
+
+  acceptanceImplementation "io.cucumber:cucumber-java:$cucumber_version"
+  acceptanceImplementation "io.cucumber:cucumber-junit:$cucumber_version"
+  acceptanceImplementation "io.cucumber:cucumber-spring:$cucumber_version"
+  acceptanceImplementation "org.springframework.cloud:spring-cloud-contract-wiremock:$cloud_wiremock_version"
+}
+
+test {
+  useJUnitPlatform()
+}
+
+task acceptance(type: Test) {
+  description = 'Runs Aceptance tests'
+  group = 'verification'
+
+  dependsOn compileAcceptanceJava
+  mustRunAfter test
+
+  testClassesDirs = sourceSets.acceptance.output.classesDirs
+  classpath = sourceSets.acceptance.runtimeClasspath
+  outputs.upToDateWhen { false }
+}
+
+tasks.build.dependsOn tasks.acceptance

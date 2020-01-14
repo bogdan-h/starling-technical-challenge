@@ -1,0 +1,12 @@
+target
+classes
+
+*.iml
+*.DS_Store
+
+.idea/*
+!.idea/runConfigurations
+
+.gradle
+build
+out
