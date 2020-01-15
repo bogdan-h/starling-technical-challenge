@@ -2,6 +2,7 @@ package com.starling.exercise.roundup.steps;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.PUT;
 
@@ -17,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 @SpringTest
 public class CommonStepDefs {
 
+  private static final String ROUNDUP_URL = "http://localhost:%d/api/v2/account/%s/savings-goals/%s/roundup/transactions-between?minTransactionTimestamp=%s&maxTransactionTimestamp=%s";
+
   @Autowired
   private TestRestTemplate restTemplate;
 
@@ -26,9 +29,9 @@ public class CommonStepDefs {
   @LocalServerPort
   private int port;
 
-  @When("^I invoke the roundup feature$")
-  public void roundup() {
-    final String roundupUrl = format("http://localhost:%d/api/v1/roundup", port);
+  @When("I invoke the roundup feature on transactions between {string} and {string}")
+  public void roundup(String from, String to) {
+    final String roundupUrl = format(ROUNDUP_URL, port, randomUUID(), randomUUID(), from, to);
     ResponseEntity<String> response = restTemplate.exchange(roundupUrl, PUT, null, String.class, emptyMap());
     responseHolder.set(response);
   }
