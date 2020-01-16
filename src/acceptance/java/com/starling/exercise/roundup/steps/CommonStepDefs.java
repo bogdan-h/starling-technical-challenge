@@ -34,7 +34,9 @@ public class CommonStepDefs {
   public void roundup(String minTransactionTimestamp, String maxTransactionTimestamp) {
     final UUID accountUid = randomUUID();
     acceptanceTestContext.setAccountUid(accountUid);
-    final String roundupUrl = format(ROUNDUP_URL, port, accountUid, randomUUID(), minTransactionTimestamp,
+    final UUID savingsGoalUid = randomUUID();
+    acceptanceTestContext.setSavingsGoalUid(savingsGoalUid);
+    final String roundupUrl = format(ROUNDUP_URL, port, accountUid, savingsGoalUid, minTransactionTimestamp,
         maxTransactionTimestamp);
     ResponseEntity<String> response = restTemplate.exchange(roundupUrl, PUT, null, String.class, emptyMap());
     acceptanceTestContext.setResponse(response);

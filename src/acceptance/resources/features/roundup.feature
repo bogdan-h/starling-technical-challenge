@@ -3,6 +3,7 @@ Feature: Roundup
   Scenario Outline: Should accept and validate minTransactionTimestamp and maxTransactionTimestamp query parameters
     Given The Accounts API responds with 200
     And The Transaction Feed API responds with 200
+    And The Savings Goal API responds with 200
     When I invoke the roundup feature on transactions between '<minTransactionTimestamp>' and '<maxTransactionTimestamp>'
     Then The HTTP response status will be <status>
     Examples:
@@ -16,6 +17,7 @@ Feature: Roundup
   Scenario Outline: Should handle Accounts API errors
     Given The Accounts API responds with <accounts_api_status>
     And The Transaction Feed API responds with 200
+    And The Savings Goal API responds with 200
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
     Then The HTTP response status will be <status>
     Examples:
@@ -30,6 +32,22 @@ Feature: Roundup
   Scenario Outline: Should handle Transaction Feed API errors
     Given The Accounts API responds with 200
     And The Transaction Feed API responds with <accounts_api_status>
+    And The Savings Goal API responds with 200
+    When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
+    Then The HTTP response status will be <status>
+    Examples:
+      | accounts_api_status | status |
+      | 200                 | 200    |
+      | 400                 | 500    |
+      | 401                 | 500    |
+      | 403                 | 500    |
+      | 404                 | 500    |
+      | 500                 | 502    |
+
+  Scenario Outline: Should handle Savings Goal API errors
+    Given The Accounts API responds with 200
+    And The Transaction Feed API responds with 200
+    And The Savings Goal API responds with <accounts_api_status>
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
     Then The HTTP response status will be <status>
     Examples:
@@ -46,4 +64,5 @@ Feature: Roundup
     And The Transaction Feed API responds with 200
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
     Then The Accounts API has been called correctly
-    Then The Transaction Feed API has been called correctly for transactions between '2019-01-01T00:00Z' and '2019-01-02T00:00Z'
+    And The Transaction Feed API has been called correctly for transactions between '2019-01-01T00:00Z' and '2019-01-02T00:00Z'
+    And The Savings Goal API has been called correctly

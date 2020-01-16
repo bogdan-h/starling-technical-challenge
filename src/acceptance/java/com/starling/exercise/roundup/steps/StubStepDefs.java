@@ -21,6 +21,11 @@ public class StubStepDefs {
     starlingStubs.stubTransactionFeed(status);
   }
 
+  @Given("^The Savings Goal API responds with (.*)$")
+  public void stubSavingsGoal(Integer status) throws JsonProcessingException {
+    starlingStubs.stubSavingsGoal(status);
+  }
+
   @Then("The Accounts API has been called correctly")
   public void verifyAccounts() {
     starlingStubs.verifyAccounts();
@@ -29,5 +34,10 @@ public class StubStepDefs {
   @Then("The Transaction Feed API has been called correctly for transactions between {string} and {string}")
   public void verifyTransactionFeed(String minTransactionTimestamp, String maxTransactionTimestamp) {
     starlingStubs.verifyTransactionFeed(minTransactionTimestamp, maxTransactionTimestamp);
+  }
+
+  @Then("The Savings Goal API has been called correctly")
+  public void verifySavingsGoal() {
+    starlingStubs.verifySavingsGoal();
   }
 }

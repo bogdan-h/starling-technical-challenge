@@ -13,6 +13,7 @@ public class AcceptanceTestContext {
   private ResponseEntity<String> response;
   private UUID accountUid;
   private UUID defaultCategoryUid;
+  private UUID savingsGoalUid;
 
   public void setResponse(ResponseEntity<String> response) {
     this.response = response;
@@ -36,5 +37,13 @@ public class AcceptanceTestContext {
 
   public void setDefaultCategoryUid(UUID defaultCategoryUid) {
     this.defaultCategoryUid = defaultCategoryUid;
+  }
+
+  public UUID getSavingsGoalUid() {
+    return savingsGoalUid;
+  }
+
+  public void setSavingsGoalUid(UUID savingsGoalUid) {
+    this.savingsGoalUid = savingsGoalUid;
   }
 }

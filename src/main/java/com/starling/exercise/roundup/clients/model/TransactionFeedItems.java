@@ -14,13 +14,6 @@ public class TransactionFeedItems {
   @Builder
   public static class TransactionFeedItem {
 
-    private final TransactionAmount amount;
-  }
-
-  @Value
-  @Builder
-  public static class TransactionAmount {
-
-    private final Integer minorUnits;
+    private final Amount amount;
   }
 }

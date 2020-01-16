@@ -1,13 +1,15 @@
 package com.starling.exercise.roundup.clients;
 
-import static org.springframework.http.HttpMethod.GET;
+import static java.util.UUID.randomUUID;
+import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
 import com.starling.exercise.roundup.clients.model.Accounts;
+import com.starling.exercise.roundup.clients.model.Amount;
+import com.starling.exercise.roundup.clients.model.SavingsGoalTransferRequest;
 import com.starling.exercise.roundup.exception.HttpClientServiceException;
-import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -23,38 +25,38 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionFeedClient {
+public class SavingsGoalClient {
 
   private final RestTemplate restTemplate;
-  @Value("${transaction-feed.transactions-between.url}")
-  private String transactionFeedUrl;
+  @Value("${savings-goal.add-money.url}")
+  private String savingsGoalUrl;
 
-  public Accounts transactionFeed(UUID accountUid, UUID categoryUid, OffsetDateTime minTransactionTimestamp,
-      OffsetDateTime maxTransactionTimestamp) {
+  public Accounts addMoney(UUID accountUid, UUID savingsGoalUid, Amount amount) {
 
     HttpHeaders headers = new HttpHeaders();
     headers.add("Accept", "application/json");
     headers.add("Content-Type", "application/json");
     headers.add("Authorization", "Bearer mock_token");
-    HttpEntity<?> httpEntity = new HttpEntity<>(headers);
+
+    final SavingsGoalTransferRequest transferRequest = SavingsGoalTransferRequest.builder().amount(amount).build();
+
+    HttpEntity<SavingsGoalTransferRequest> httpEntity = new HttpEntity<>(transferRequest, headers);
 
     Map<String, String> urlParams = new HashMap<>();
     urlParams.put("accountUid", accountUid.toString());
-    urlParams.put("categoryUid", categoryUid.toString());
+    urlParams.put("savingsGoalUid", savingsGoalUid.toString());
+    urlParams.put("transferUid", randomUUID().toString());
 
-    final String url = fromHttpUrl(transactionFeedUrl)
-        .queryParam("minTransactionTimestamp", minTransactionTimestamp.toString())
-        .queryParam("maxTransactionTimestamp", maxTransactionTimestamp.toString())
-        .buildAndExpand(urlParams).toUriString();
+    final String url = fromHttpUrl(savingsGoalUrl).buildAndExpand(urlParams).toUriString();
 
     try {
-      ResponseEntity<Accounts> response = restTemplate.exchange(url, GET, httpEntity, Accounts.class);
+      ResponseEntity<Accounts> response = restTemplate.exchange(url, PUT, httpEntity, Accounts.class);
 
       return response.getBody();
     } catch (HttpClientErrorException ex) {
-      throw new HttpClientServiceException("Failed to call Transaction Feed API correctly", INTERNAL_SERVER_ERROR);
+      throw new HttpClientServiceException("Failed to call Savings Goal API correctly", INTERNAL_SERVER_ERROR);
     } catch (HttpServerErrorException ex) {
-      throw new HttpClientServiceException("Transaction Feed API failed to fulfill the request", BAD_GATEWAY);
+      throw new HttpClientServiceException("Savings Goal API failed to fulfill the request", BAD_GATEWAY);
     } catch (Exception e) {
       throw new HttpClientServiceException("Something unrecoverable has happened", INTERNAL_SERVER_ERROR);
     }
