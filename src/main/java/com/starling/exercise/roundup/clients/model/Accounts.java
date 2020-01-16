@@ -14,6 +14,7 @@ public class Accounts {
   @Value
   @Builder
   public static class Account {
+
     private final UUID defaultCategory;
   }
 }
