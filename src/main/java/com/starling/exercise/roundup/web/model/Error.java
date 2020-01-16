@@ -1,4 +1,4 @@
-package com.starling.exercise.roundup.clients.model;
+package com.starling.exercise.roundup.web.model;
 
 import lombok.Builder;
 import lombok.Value;

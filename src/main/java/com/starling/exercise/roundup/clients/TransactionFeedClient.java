@@ -5,7 +5,7 @@ import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
-import com.starling.exercise.roundup.clients.model.Accounts;
+import com.starling.exercise.roundup.clients.model.TransactionFeedItems;
 import com.starling.exercise.roundup.exception.HttpClientServiceException;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class TransactionFeedClient {
   @Value("${transaction-feed.transactions-between.url}")
   private String transactionFeedUrl;
 
-  public Accounts transactionFeed(UUID accountUid, UUID categoryUid, OffsetDateTime minTransactionTimestamp,
+  public TransactionFeedItems transactionFeed(UUID accountUid, UUID categoryUid, OffsetDateTime minTransactionTimestamp,
       OffsetDateTime maxTransactionTimestamp) {
 
     HttpHeaders headers = new HttpHeaders();
@@ -48,7 +48,7 @@ public class TransactionFeedClient {
         .buildAndExpand(urlParams).toUriString();
 
     try {
-      ResponseEntity<Accounts> response = restTemplate.exchange(url, GET, httpEntity, Accounts.class);
+      ResponseEntity<TransactionFeedItems> response = restTemplate.exchange(url, GET, httpEntity, TransactionFeedItems.class);
 
       return response.getBody();
     } catch (HttpClientErrorException ex) {

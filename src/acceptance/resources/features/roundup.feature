@@ -20,49 +20,65 @@ Feature: Roundup
     And The Savings Goal API responds with 200
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
     Then The HTTP response status will be <status>
+    And The HTTP error message will be '<message>'
     Examples:
-      | accounts_api_status | status |
-      | 200                 | 200    |
-      | 400                 | 500    |
-      | 401                 | 500    |
-      | 403                 | 500    |
-      | 404                 | 500    |
-      | 500                 | 502    |
+      | accounts_api_status | status | message                                    |
+      | 400                 | 500    | Failed to call Accounts API correctly      |
+      | 401                 | 500    | Failed to call Accounts API correctly      |
+      | 403                 | 500    | Failed to call Accounts API correctly      |
+      | 404                 | 500    | Failed to call Accounts API correctly      |
+      | 500                 | 502    | Accounts API failed to fulfill the request |
 
   Scenario Outline: Should handle Transaction Feed API errors
     Given The Accounts API responds with 200
-    And The Transaction Feed API responds with <accounts_api_status>
+    And The Transaction Feed API responds with <transaction_feed_api_status>
     And The Savings Goal API responds with 200
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
     Then The HTTP response status will be <status>
+    And The HTTP error message will be '<message>'
     Examples:
-      | accounts_api_status | status |
-      | 200                 | 200    |
-      | 400                 | 500    |
-      | 401                 | 500    |
-      | 403                 | 500    |
-      | 404                 | 500    |
-      | 500                 | 502    |
+      | transaction_feed_api_status | status | message                                            |
+      | 400                         | 500    | Failed to call Transaction Feed API correctly      |
+      | 401                         | 500    | Failed to call Transaction Feed API correctly      |
+      | 403                         | 500    | Failed to call Transaction Feed API correctly      |
+      | 404                         | 500    | Failed to call Transaction Feed API correctly      |
+      | 500                         | 502    | Transaction Feed API failed to fulfill the request |
 
   Scenario Outline: Should handle Savings Goal API errors
     Given The Accounts API responds with 200
     And The Transaction Feed API responds with 200
-    And The Savings Goal API responds with <accounts_api_status>
+    And The Savings Goal API responds with <savings_goal_api_status>
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
     Then The HTTP response status will be <status>
+    And The HTTP error message will be '<message>'
     Examples:
-      | accounts_api_status | status |
-      | 200                 | 200    |
-      | 400                 | 500    |
-      | 401                 | 500    |
-      | 403                 | 500    |
-      | 404                 | 500    |
-      | 500                 | 502    |
+      | savings_goal_api_status | status | message                                        |
+      | 400                     | 500    | Failed to call Savings Goal API correctly      |
+      | 401                     | 500    | Failed to call Savings Goal API correctly      |
+      | 403                     | 500    | Failed to call Savings Goal API correctly      |
+      | 404                     | 500    | Failed to call Savings Goal API correctly      |
+      | 500                     | 502    | Savings Goal API failed to fulfill the request |
 
   Scenario: Should call the Starling APIs correctly
     Given The Accounts API responds with 200
     And The Transaction Feed API responds with 200
+    And The Savings Goal API responds with 200
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
     Then The Accounts API has been called correctly
     And The Transaction Feed API has been called correctly for transactions between '2019-01-01T00:00Z' and '2019-01-02T00:00Z'
     And The Savings Goal API has been called correctly
+
+  Scenario: Should roundup feed items and add to savings account
+    Given The Accounts API responds with 200
+    And The Transaction Feed API responds with the following feed items '12,24'
+    And The Savings Goal API responds with 200
+    When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
+    Then The Savings Goal API has been called correctly with 164
+
+  Scenario: Should handle failed transfer into savings account
+    Given The Accounts API responds with 200
+    And The Transaction Feed API responds with the following feed items '12,24'
+    And The Savings Goal API responds with error message 'You reached your Savings Goal limit'
+    When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
+    Then The HTTP response status will be 200
+    And The HTTP error message will be 'You reached your Savings Goal limit'

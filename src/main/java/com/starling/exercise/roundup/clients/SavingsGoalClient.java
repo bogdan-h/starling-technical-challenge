@@ -6,10 +6,10 @@ import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
-import com.starling.exercise.roundup.clients.model.Accounts;
 import com.starling.exercise.roundup.clients.model.Amount;
-import com.starling.exercise.roundup.clients.model.SavingsGoalTransferRequest;
+import com.starling.exercise.roundup.clients.model.SavingsGoalTransfer;
 import com.starling.exercise.roundup.exception.HttpClientServiceException;
+import com.starling.exercise.roundup.web.model.StarlingOperation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -31,16 +31,16 @@ public class SavingsGoalClient {
   @Value("${savings-goal.add-money.url}")
   private String savingsGoalUrl;
 
-  public Accounts addMoney(UUID accountUid, UUID savingsGoalUid, Amount amount) {
+  public StarlingOperation addMoney(UUID accountUid, UUID savingsGoalUid, Amount amount) {
 
     HttpHeaders headers = new HttpHeaders();
     headers.add("Accept", "application/json");
     headers.add("Content-Type", "application/json");
     headers.add("Authorization", "Bearer mock_token");
 
-    final SavingsGoalTransferRequest transferRequest = SavingsGoalTransferRequest.builder().amount(amount).build();
+    final SavingsGoalTransfer transferRequest = SavingsGoalTransfer.builder().amount(amount).build();
 
-    HttpEntity<SavingsGoalTransferRequest> httpEntity = new HttpEntity<>(transferRequest, headers);
+    HttpEntity<SavingsGoalTransfer> httpEntity = new HttpEntity<>(transferRequest, headers);
 
     Map<String, String> urlParams = new HashMap<>();
     urlParams.put("accountUid", accountUid.toString());
@@ -50,7 +50,8 @@ public class SavingsGoalClient {
     final String url = fromHttpUrl(savingsGoalUrl).buildAndExpand(urlParams).toUriString();
 
     try {
-      ResponseEntity<Accounts> response = restTemplate.exchange(url, PUT, httpEntity, Accounts.class);
+      ResponseEntity<StarlingOperation> response = restTemplate
+          .exchange(url, PUT, httpEntity, StarlingOperation.class);
 
       return response.getBody();
     } catch (HttpClientErrorException ex) {

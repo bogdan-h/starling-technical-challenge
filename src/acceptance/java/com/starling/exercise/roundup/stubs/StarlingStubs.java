@@ -13,15 +13,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.starling.exercise.roundup.utils.AcceptanceTestContext.objectMapper;
 import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.starling.exercise.roundup.clients.model.Accounts;
 import com.starling.exercise.roundup.clients.model.Accounts.Account;
 import com.starling.exercise.roundup.clients.model.Amount;
-import com.starling.exercise.roundup.clients.model.SavingsGoalTransferResponse;
+import com.starling.exercise.roundup.clients.model.SavingsGoalTransfer;
 import com.starling.exercise.roundup.clients.model.TransactionFeedItems;
 import com.starling.exercise.roundup.clients.model.TransactionFeedItems.TransactionFeedItem;
 import com.starling.exercise.roundup.utils.AcceptanceTestContext;
+import com.starling.exercise.roundup.web.model.Error;
+import com.starling.exercise.roundup.web.model.StarlingOperation;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,12 +80,36 @@ public class StarlingStubs {
             .withBody(objectMapper.writeValueAsString(feedItems)).withStatus(status)));
   }
 
+  public void stubTransactionFeed(List<Integer> amounts) throws JsonProcessingException {
+    final List<TransactionFeedItem> feedItemList = amounts.stream()
+        .map(amount -> TransactionFeedItem.builder().amount(Amount.builder().minorUnits(amount).build()).build())
+        .collect(toList());
+
+    final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(feedItemList).build();
+
+    stubFor(get(urlPathMatching(TRANSACTION_FEED_PATH))
+        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+            .withBody(objectMapper.writeValueAsString(feedItems)).withStatus(200)));
+  }
+
   public void stubSavingsGoal(Integer status) throws JsonProcessingException {
-    final SavingsGoalTransferResponse transferResponse = SavingsGoalTransferResponse.builder().success(true).build();
+    final StarlingOperation transferResponse = StarlingOperation.builder().success(true).build();
 
     stubFor(put(urlPathMatching(SAVINGS_GOAL_PATH))
         .willReturn(aResponse().withHeader("Content-Type", "application/json")
             .withBody(objectMapper.writeValueAsString(transferResponse)).withStatus(status)));
+  }
+
+  public void stubSavingsGoalWithFailure(String message) throws JsonProcessingException {
+    final Error error = Error.builder().message(message).build();
+    final StarlingOperation transferResponse = StarlingOperation.builder()
+        .success(false)
+        .errors(List.of(error))
+        .build();
+
+    stubFor(put(urlPathMatching(SAVINGS_GOAL_PATH))
+        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+            .withBody(objectMapper.writeValueAsString(transferResponse)).withStatus(200)));
   }
 
   public void verifySavingsGoal() {
@@ -94,5 +121,16 @@ public class StarlingStubs {
         .withHeader("Accept", equalTo("application/json"))
         .withHeader("Content-Type", equalTo("application/json"))
         .withHeader("Authorization", equalTo("Bearer mock_token")));
+  }
+
+  public void verifySavingsGoal(Integer amount) throws JsonProcessingException {
+    Amount transferAmount = Amount.builder().minorUnits(amount).build();
+    SavingsGoalTransfer transferRequest = SavingsGoalTransfer.builder().amount(transferAmount).build();
+
+    verify(putRequestedFor(urlPathMatching(SAVINGS_GOAL_PATH))
+        .withHeader("Accept", equalTo("application/json"))
+        .withHeader("Content-Type", equalTo("application/json"))
+        .withHeader("Authorization", equalTo("Bearer mock_token"))
+        .withRequestBody(equalTo(objectMapper.writeValueAsString(transferRequest))));
   }
 }

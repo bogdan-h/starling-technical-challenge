@@ -1,5 +1,6 @@
 package com.starling.exercise.roundup.steps;
 
+import static com.starling.exercise.roundup.utils.AcceptanceTestContext.objectMapper;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static java.util.UUID.randomUUID;
@@ -8,8 +9,10 @@ import static org.springframework.http.HttpMethod.PUT;
 
 import com.starling.exercise.roundup.SpringTest;
 import com.starling.exercise.roundup.utils.AcceptanceTestContext;
+import com.starling.exercise.roundup.web.model.StarlingOperation;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.io.IOException;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -46,5 +49,13 @@ public class CommonStepDefs {
   public void theHttpResponseStatusWillBe(Integer status) {
     Integer actualStatus = acceptanceTestContext.getResponseStatusCode();
     assertThat(actualStatus).isEqualTo(status);
+  }
+
+  @Then("The HTTP error message will be {string}")
+  public void theHttpErrorMessageWillBe(String message) throws IOException {
+    String body = acceptanceTestContext.getResponseBody();
+    StarlingOperation response = objectMapper.readValue(body, StarlingOperation.class);
+    assertThat(response.getErrors().get(0).getMessage()).isEqualTo(message);
+    assertThat(response.getSuccess()).isFalse();
   }
 }

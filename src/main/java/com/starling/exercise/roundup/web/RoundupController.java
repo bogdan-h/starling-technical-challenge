@@ -4,6 +4,7 @@ import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME
 import static org.springframework.http.ResponseEntity.ok;
 
 import com.starling.exercise.roundup.service.RoundupService;
+import com.starling.exercise.roundup.web.model.StarlingOperation;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +22,16 @@ public class RoundupController {
   private final RoundupService roundupService;
 
   @PutMapping(value = "/api/v2/account/{accountUid}/savings-goals/{savingsGoalUid}/roundup/transactions-between")
-  public ResponseEntity roundUp(
+  public ResponseEntity<StarlingOperation> roundUp(
       @PathVariable("accountUid") UUID accountUid,
       @PathVariable("savingsGoalUid") UUID savingsGoalUid,
       @RequestParam("minTransactionTimestamp") @DateTimeFormat(iso = DATE_TIME) OffsetDateTime minTransactionTimestamp,
       @RequestParam("maxTransactionTimestamp") @DateTimeFormat(iso = DATE_TIME) OffsetDateTime maxTransactionTimestamp
   ) {
 
-    roundupService.roundup(accountUid, savingsGoalUid, minTransactionTimestamp, maxTransactionTimestamp);
+    final StarlingOperation starlingOperation = roundupService
+        .roundup(accountUid, savingsGoalUid, minTransactionTimestamp, maxTransactionTimestamp);
 
-    return ok().build();
+    return ok().body(starlingOperation);
   }
 }

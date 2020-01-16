@@ -23,6 +23,10 @@ public class AcceptanceTestContext {
     return response.getStatusCodeValue();
   }
 
+  public String getResponseBody() {
+    return response.getBody();
+  }
+
   public UUID getAccountUid() {
     return accountUid;
   }

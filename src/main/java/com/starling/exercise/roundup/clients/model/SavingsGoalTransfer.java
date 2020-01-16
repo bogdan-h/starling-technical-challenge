@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class SavingsGoalTransferRequest {
+public class SavingsGoalTransfer {
 
   private final Amount amount;
 }
