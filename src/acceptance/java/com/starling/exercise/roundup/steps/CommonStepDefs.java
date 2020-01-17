@@ -7,7 +7,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.PUT;
 
-import com.starling.exercise.roundup.SpringTest;
+import com.starling.exercise.roundup.SpringAcceptanceTest;
 import com.starling.exercise.roundup.utils.AcceptanceTestContext;
 import com.starling.exercise.roundup.web.model.StarlingOperation;
 import cucumber.api.java.en.Then;
@@ -19,7 +19,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 
-@SpringTest
+@SpringAcceptanceTest
 public class CommonStepDefs {
 
   private static final String ROUNDUP_URL = "http://localhost:%d/api/v2/account/%s/savings-goals/%s/roundup/transactions-between?minTransactionTimestamp=%s&maxTransactionTimestamp=%s";
