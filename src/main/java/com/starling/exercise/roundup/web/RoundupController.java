@@ -1,6 +1,7 @@
 package com.starling.exercise.roundup.web;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.ResponseEntity.ok;
 
 import com.starling.exercise.roundup.service.RoundupService;
@@ -32,6 +33,6 @@ public class RoundupController {
     final StarlingOperation starlingOperation = roundupService
         .roundup(accountUid, savingsGoalUid, minTransactionTimestamp, maxTransactionTimestamp);
 
-    return ok().body(starlingOperation);
+    return ok().contentType(APPLICATION_JSON).body(starlingOperation);
   }
 }

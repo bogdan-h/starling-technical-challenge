@@ -1,14 +1,12 @@
 package com.starling.exercise.roundup.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AcceptanceTestContext {
-
-  public static final ObjectMapper objectMapper = new ObjectMapper();
 
   private ResponseEntity<String> response;
   private UUID accountUid;
@@ -21,6 +19,10 @@ public class AcceptanceTestContext {
 
   public Integer getResponseStatusCode() {
     return response.getStatusCodeValue();
+  }
+
+  public List<String> getResponseHeader(String headerKey) {
+    return response.getHeaders().get(headerKey);
   }
 
   public String getResponseBody() {

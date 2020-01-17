@@ -10,12 +10,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
-import static com.starling.exercise.roundup.utils.AcceptanceTestContext.objectMapper;
 import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.starling.exercise.roundup.clients.model.Accounts;
 import com.starling.exercise.roundup.clients.model.Accounts.Account;
 import com.starling.exercise.roundup.clients.model.Amount;
@@ -32,6 +32,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StarlingStubs {
+
+  @Autowired
+  private ObjectMapper objectMapper;
 
   private static final String ACCOUNTS_PATH = "/api/v2/accounts";
   private static final String TRANSACTION_FEED_PATH = "/api/v2/feed/account/(.*)/category/(.*)/transactions-between";

@@ -1,12 +1,14 @@
 package com.starling.exercise.roundup.steps;
 
-import static com.starling.exercise.roundup.utils.AcceptanceTestContext.objectMapper;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.starling.exercise.roundup.SpringAcceptanceTest;
 import com.starling.exercise.roundup.utils.AcceptanceTestContext;
 import com.starling.exercise.roundup.web.model.StarlingOperation;
@@ -30,6 +32,9 @@ public class CommonStepDefs {
   @Autowired
   private AcceptanceTestContext acceptanceTestContext;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+
   @LocalServerPort
   private int port;
 
@@ -49,6 +54,9 @@ public class CommonStepDefs {
   public void theHttpResponseStatusWillBe(Integer status) {
     Integer actualStatus = acceptanceTestContext.getResponseStatusCode();
     assertThat(actualStatus).isEqualTo(status);
+    if (acceptanceTestContext.getResponseStatusCode() != 400) {
+      assertThat(acceptanceTestContext.getResponseHeader(CONTENT_TYPE)).contains(APPLICATION_JSON_VALUE);
+    }
   }
 
   @Then("The HTTP error message will be {string}")

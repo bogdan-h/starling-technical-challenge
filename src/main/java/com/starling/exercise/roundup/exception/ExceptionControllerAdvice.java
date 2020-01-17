@@ -1,5 +1,6 @@
 package com.starling.exercise.roundup.exception;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.ResponseEntity.status;
 
 import com.starling.exercise.roundup.web.model.Error;
@@ -19,6 +20,6 @@ public class ExceptionControllerAdvice {
         .success(false)
         .errors(List.of(error))
         .build();
-    return status(ex.getStatus()).body(response);
+    return status(ex.getStatus()).contentType(APPLICATION_JSON).body(response);
   }
 }
