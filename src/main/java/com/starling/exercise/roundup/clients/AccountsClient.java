@@ -11,8 +11,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.starling.exercise.roundup.clients.model.Accounts;
 import com.starling.exercise.roundup.exception.HttpClientServiceException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,6 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-@RequiredArgsConstructor
 public class AccountsClient {
 
   private final RestTemplate restTemplate;
@@ -30,6 +29,10 @@ public class AccountsClient {
   private String accountsUrl;
   @Value("${authorization.token}")
   private String authorizationToken;
+
+  public AccountsClient(RestTemplateBuilder restTemplateBuilder) {
+    restTemplate = restTemplateBuilder.build();
+  }
 
   public Accounts accounts() {
 
