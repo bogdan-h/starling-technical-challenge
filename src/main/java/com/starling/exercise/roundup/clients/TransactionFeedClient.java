@@ -1,8 +1,13 @@
 package com.starling.exercise.roundup.clients;
 
+import static java.lang.String.format;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
 import com.starling.exercise.roundup.clients.model.TransactionFeedItems;
@@ -28,14 +33,16 @@ public class TransactionFeedClient {
   private final RestTemplate restTemplate;
   @Value("${transaction-feed.transactions-between.url}")
   private String transactionFeedUrl;
+  @Value("${authorization.token}")
+  private String authorizationToken;
 
   public TransactionFeedItems transactionFeed(UUID accountUid, UUID categoryUid, OffsetDateTime minTransactionTimestamp,
       OffsetDateTime maxTransactionTimestamp) {
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add("Accept", "application/json");
-    headers.add("Content-Type", "application/json");
-    headers.add("Authorization", "Bearer mock_token");
+    headers.add(ACCEPT, APPLICATION_JSON_VALUE);
+    headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+    headers.add(AUTHORIZATION, format("Bearer %s", authorizationToken));
     HttpEntity<?> httpEntity = new HttpEntity<>(headers);
 
     Map<String, String> urlParams = new HashMap<>();

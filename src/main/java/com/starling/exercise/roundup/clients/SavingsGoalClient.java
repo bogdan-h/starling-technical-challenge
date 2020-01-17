@@ -1,9 +1,14 @@
 package com.starling.exercise.roundup.clients;
 
+import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
+import static org.springframework.http.HttpHeaders.ACCEPT;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
 import com.starling.exercise.roundup.clients.model.Amount;
@@ -30,13 +35,15 @@ public class SavingsGoalClient {
   private final RestTemplate restTemplate;
   @Value("${savings-goal.add-money.url}")
   private String savingsGoalUrl;
+  @Value("${authorization.token}")
+  private String authorizationToken;
 
   public StarlingOperation addMoney(UUID accountUid, UUID savingsGoalUid, Amount amount) {
 
     HttpHeaders headers = new HttpHeaders();
-    headers.add("Accept", "application/json");
-    headers.add("Content-Type", "application/json");
-    headers.add("Authorization", "Bearer mock_token");
+    headers.add(ACCEPT, APPLICATION_JSON_VALUE);
+    headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
+    headers.add(AUTHORIZATION, format("Bearer %s", authorizationToken));
 
     final SavingsGoalTransfer transferRequest = SavingsGoalTransfer.builder().amount(amount).build();
 
