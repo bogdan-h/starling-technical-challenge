@@ -40,16 +40,16 @@ public class SavingsGoalClient {
 
   public StarlingOperation addMoney(UUID accountUid, UUID savingsGoalUid, Amount amount) {
 
-    HttpHeaders headers = new HttpHeaders();
+    final HttpHeaders headers = new HttpHeaders();
     headers.add(ACCEPT, APPLICATION_JSON_VALUE);
     headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
     headers.add(AUTHORIZATION, format("Bearer %s", authorizationToken));
 
     final SavingsGoalTransfer transferRequest = SavingsGoalTransfer.builder().amount(amount).build();
 
-    HttpEntity<SavingsGoalTransfer> httpEntity = new HttpEntity<>(transferRequest, headers);
+    final HttpEntity<SavingsGoalTransfer> httpEntity = new HttpEntity<>(transferRequest, headers);
 
-    Map<String, String> urlParams = new HashMap<>();
+    final Map<String, String> urlParams = new HashMap<>();
     urlParams.put("accountUid", accountUid.toString());
     urlParams.put("savingsGoalUid", savingsGoalUid.toString());
     urlParams.put("transferUid", randomUUID().toString());
@@ -57,7 +57,7 @@ public class SavingsGoalClient {
     final String url = fromHttpUrl(savingsGoalUrl).buildAndExpand(urlParams).toUriString();
 
     try {
-      ResponseEntity<StarlingOperation> response = restTemplate
+      final ResponseEntity<StarlingOperation> response = restTemplate
           .exchange(url, PUT, httpEntity, StarlingOperation.class);
 
       return response.getBody();

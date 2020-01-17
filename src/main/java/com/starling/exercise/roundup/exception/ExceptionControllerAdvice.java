@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice(basePackages = "com.starling.exercise.roundup")
+@ControllerAdvice("com.starling.exercise.roundup")
 public class ExceptionControllerAdvice {
 
   @ExceptionHandler(HttpClientServiceException.class)

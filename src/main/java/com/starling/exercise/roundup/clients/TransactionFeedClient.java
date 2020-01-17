@@ -39,13 +39,13 @@ public class TransactionFeedClient {
   public TransactionFeedItems transactionFeed(UUID accountUid, UUID categoryUid, OffsetDateTime minTransactionTimestamp,
       OffsetDateTime maxTransactionTimestamp) {
 
-    HttpHeaders headers = new HttpHeaders();
+    final HttpHeaders headers = new HttpHeaders();
     headers.add(ACCEPT, APPLICATION_JSON_VALUE);
     headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
     headers.add(AUTHORIZATION, format("Bearer %s", authorizationToken));
-    HttpEntity<?> httpEntity = new HttpEntity<>(headers);
+    final HttpEntity<?> httpEntity = new HttpEntity<>(headers);
 
-    Map<String, String> urlParams = new HashMap<>();
+    final Map<String, String> urlParams = new HashMap<>();
     urlParams.put("accountUid", accountUid.toString());
     urlParams.put("categoryUid", categoryUid.toString());
 

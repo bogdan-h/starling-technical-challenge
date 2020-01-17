@@ -22,7 +22,7 @@ public class RoundupController {
 
   private final RoundupService roundupService;
 
-  @PutMapping(value = "/api/v2/account/{accountUid}/savings-goals/{savingsGoalUid}/roundup/transactions-between")
+  @PutMapping("/api/v2/account/{accountUid}/savings-goals/{savingsGoalUid}/roundup/transactions-between")
   public ResponseEntity<StarlingOperation> roundUp(
       @PathVariable("accountUid") UUID accountUid,
       @PathVariable("savingsGoalUid") UUID savingsGoalUid,

@@ -28,13 +28,11 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @ExtendWith(SpringExtension.class)
 @RestClientTest(AccountsClient.class)
-@TestPropertySource(properties = {"accounts.url:/api/v2/accounts", "authorization.token:mock_token"})
 class AccountsClientTest {
 
   private final Account account = Account.builder().defaultCategory(randomUUID()).build();

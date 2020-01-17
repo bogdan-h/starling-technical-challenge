@@ -36,14 +36,14 @@ public class AccountsClient {
 
   public Accounts accounts() {
 
-    HttpHeaders headers = new HttpHeaders();
+    final HttpHeaders headers = new HttpHeaders();
     headers.add(ACCEPT, APPLICATION_JSON_VALUE);
     headers.add(CONTENT_TYPE, APPLICATION_JSON_VALUE);
     headers.add(AUTHORIZATION, format("Bearer %s", authorizationToken));
-    HttpEntity<?> httpEntity = new HttpEntity<>(headers);
+    final HttpEntity<?> httpEntity = new HttpEntity<>(headers);
 
     try {
-      ResponseEntity<Accounts> response = restTemplate.exchange(accountsUrl, GET, httpEntity, Accounts.class);
+      final ResponseEntity<Accounts> response = restTemplate.exchange(accountsUrl, GET, httpEntity, Accounts.class);
 
       return response.getBody();
     } catch (HttpClientErrorException ex) {

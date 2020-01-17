@@ -36,7 +36,7 @@ public class RoundupService {
       return savingsGoalClient.addMoney(accountUid, savingsGoalUid, amount);
     }
 
-    Error error = Error.builder().message("There are zero accounts for this user").build();
+    final Error error = Error.builder().message("There are zero accounts for this user").build();
     return StarlingOperation.builder().success(false).errors(List.of(error)).build();
   }
 }
