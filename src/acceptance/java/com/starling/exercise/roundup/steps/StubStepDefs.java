@@ -33,7 +33,9 @@ public class StubStepDefs {
     final List<TransactionFeedItem> feedItemList = feedItemsTable.asMaps().stream()
         .map(entry -> {
           Integer amount = Integer.parseInt(entry.get("amount"));
-          return TransactionFeedItem.builder().amount(Amount.builder().minorUnits(amount).build()).build();
+          String currency = entry.get("currency");
+          final Amount feedItemAmount = Amount.builder().currency(currency).minorUnits(amount).build();
+          return TransactionFeedItem.builder().amount(feedItemAmount).build();
         })
         .collect(toList());
 
@@ -67,8 +69,9 @@ public class StubStepDefs {
     starlingStubs.verifySavingsGoal();
   }
 
-  @Then("The Savings Goal API has been called correctly with amount {int}")
-  public void verifySavingsGoalWithAmount(Integer amount) throws JsonProcessingException {
-    starlingStubs.verifySavingsGoal(amount);
+  @Then("The Savings Goal API has been called correctly with amount {int} of currency {string}")
+  public void verifySavingsGoalWithAmount(Integer amount, String currency) throws JsonProcessingException {
+    Amount transferAmount = Amount.builder().currency(currency).minorUnits(amount).build();
+    starlingStubs.verifySavingsGoal(transferAmount);
   }
 }

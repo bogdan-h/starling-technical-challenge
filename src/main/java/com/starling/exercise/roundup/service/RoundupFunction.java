@@ -14,7 +14,8 @@ public interface RoundupFunction {
           .map(amount -> 100 - amount % 100)
           .filter(amount -> amount != 100)
           .sum();
-      return Amount.builder().minorUnits(sum).build();
+      final String currency = feedItems.getFeedItems().get(0).getAmount().getCurrency();
+      return Amount.builder().currency(currency).minorUnits(sum).build();
     };
   }
 

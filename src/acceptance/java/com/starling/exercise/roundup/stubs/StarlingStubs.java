@@ -120,9 +120,8 @@ public class StarlingStubs {
         .withHeader("Authorization", equalTo("Bearer mock_token")));
   }
 
-  public void verifySavingsGoal(Integer amount) throws JsonProcessingException {
-    Amount transferAmount = Amount.builder().minorUnits(amount).build();
-    SavingsGoalTransfer transferRequest = SavingsGoalTransfer.builder().amount(transferAmount).build();
+  public void verifySavingsGoal(Amount amount) throws JsonProcessingException {
+    SavingsGoalTransfer transferRequest = SavingsGoalTransfer.builder().amount(amount).build();
 
     verify(putRequestedFor(urlPathMatching(SAVINGS_GOAL_PATH))
         .withHeader("Accept", equalTo("application/json"))

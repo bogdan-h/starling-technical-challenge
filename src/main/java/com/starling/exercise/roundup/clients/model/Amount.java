@@ -8,4 +8,5 @@ import lombok.Value;
 public class Amount {
 
   private final Integer minorUnits;
+  private final String currency;
 }

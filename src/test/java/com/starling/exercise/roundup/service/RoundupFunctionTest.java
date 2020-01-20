@@ -11,6 +11,7 @@ import com.starling.exercise.roundup.clients.model.TransactionFeedItems.Transact
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -45,12 +46,22 @@ class RoundupFunctionTest {
   @MethodSource("roundupTestCaseInputProvider")
   void shouldRoundup(List<Integer> amounts, Integer result) {
     final List<TransactionFeedItem> feedItemList = amounts.stream()
-        .map(amount -> TransactionFeedItem.builder().amount(Amount.builder().minorUnits(amount).build()).build())
+        .map(amount -> TransactionFeedItem.builder().amount(Amount.builder().currency("GBP").minorUnits(amount).build()).build())
         .collect(toList());
 
     final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(feedItemList).build();
 
     assertThat(roundup(feedItems).apply().getMinorUnits()).isEqualTo(result);
+  }
+
+  @Test
+  @DisplayName("should apply the currency")
+  void shouldApplyCurrency() {
+    final Amount amount = Amount.builder().currency("GBP").minorUnits(10).build();
+    final TransactionFeedItem feedItem = TransactionFeedItem.builder().amount(amount).build();
+    final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(List.of(feedItem)).build();
+
+    assertThat(roundup(feedItems).apply().getCurrency()).isEqualTo("GBP");
   }
 
 }
