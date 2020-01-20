@@ -1,12 +1,15 @@
 package com.starling.exercise.roundup.steps;
 
-import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.starling.exercise.roundup.clients.model.Amount;
+import com.starling.exercise.roundup.clients.model.TransactionFeedItems;
+import com.starling.exercise.roundup.clients.model.TransactionFeedItems.TransactionFeedItem;
 import com.starling.exercise.roundup.stubs.StarlingStubs;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
+import io.cucumber.datatable.DataTable;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,10 +28,18 @@ public class StubStepDefs {
     starlingStubs.stubTransactionFeed(status);
   }
 
-  @Given("The Transaction Feed API responds with the following feed items {string}")
-  public void stubTransactionFeedWithFeedItems(String amountValues) throws JsonProcessingException {
-    final List<Integer> amounts = stream(amountValues.split(",")).mapToInt(Integer::parseInt).boxed().collect(toList());
-    starlingStubs.stubTransactionFeed(amounts);
+  @Given("The Transaction Feed API responds with the following feed items")
+  public void stubTransactionFeedWithFeedItems(DataTable feedItemsTable) throws JsonProcessingException {
+    final List<TransactionFeedItem> feedItemList = feedItemsTable.asMaps().stream()
+        .map(entry -> {
+          Integer amount = Integer.parseInt(entry.get("amount"));
+          return TransactionFeedItem.builder().amount(Amount.builder().minorUnits(amount).build()).build();
+        })
+        .collect(toList());
+
+    final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(feedItemList).build();
+
+    starlingStubs.stubTransactionFeed(feedItems);
   }
 
   @Given("The Savings Goal API responds with {int}")
@@ -56,7 +67,7 @@ public class StubStepDefs {
     starlingStubs.verifySavingsGoal();
   }
 
-  @Then("The Savings Goal API has been called correctly with {int}")
+  @Then("The Savings Goal API has been called correctly with amount {int}")
   public void verifySavingsGoalWithAmount(Integer amount) throws JsonProcessingException {
     starlingStubs.verifySavingsGoal(amount);
   }

@@ -83,13 +83,7 @@ public class StarlingStubs {
             .withBody(objectMapper.writeValueAsString(feedItems)).withStatus(status)));
   }
 
-  public void stubTransactionFeed(List<Integer> amounts) throws JsonProcessingException {
-    final List<TransactionFeedItem> feedItemList = amounts.stream()
-        .map(amount -> TransactionFeedItem.builder().amount(Amount.builder().minorUnits(amount).build()).build())
-        .collect(toList());
-
-    final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(feedItemList).build();
-
+  public void stubTransactionFeed(TransactionFeedItems feedItems) throws JsonProcessingException {
     stubFor(get(urlPathMatching(TRANSACTION_FEED_PATH))
         .willReturn(aResponse().withHeader("Content-Type", "application/json")
             .withBody(objectMapper.writeValueAsString(feedItems)).withStatus(200)));

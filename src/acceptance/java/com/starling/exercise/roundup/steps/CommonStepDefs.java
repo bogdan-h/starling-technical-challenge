@@ -54,9 +54,7 @@ public class CommonStepDefs {
   public void theHttpResponseStatusWillBe(Integer status) {
     Integer actualStatus = acceptanceTestContext.getResponseStatusCode();
     assertThat(actualStatus).isEqualTo(status);
-    if (acceptanceTestContext.getResponseStatusCode() != 400) {
-      assertThat(acceptanceTestContext.getResponseHeader(CONTENT_TYPE)).contains(APPLICATION_JSON_VALUE);
-    }
+    assertThat(acceptanceTestContext.getResponseHeader(CONTENT_TYPE)).contains(APPLICATION_JSON_VALUE);
   }
 
   @Then("The HTTP error message will be {string}")

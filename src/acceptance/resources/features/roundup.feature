@@ -70,14 +70,17 @@ Feature: Roundup
 
   Scenario: Should roundup feed items and add to savings account
     Given The Accounts API responds with 200
-    And The Transaction Feed API responds with the following feed items '12,24'
+    And The Transaction Feed API responds with the following feed items
+      | amount |
+      | 12     |
+      | 24     |
     And The Savings Goal API responds with 200
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
-    Then The Savings Goal API has been called correctly with 164
+    Then The Savings Goal API has been called correctly with amount 164
 
   Scenario: Should handle failed transfer into savings account
     Given The Accounts API responds with 200
-    And The Transaction Feed API responds with the following feed items '12,24'
+    And The Transaction Feed API responds with 200
     And The Savings Goal API responds with error message 'You reached your Savings Goal limit'
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
     Then The HTTP response status will be 200
