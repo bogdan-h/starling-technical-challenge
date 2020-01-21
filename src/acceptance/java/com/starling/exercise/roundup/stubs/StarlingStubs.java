@@ -12,7 +12,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
-import static java.util.stream.Collectors.toList;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,16 +29,17 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * This class holds the WireMock stubs and verifications.
+ */
 @Component
 public class StarlingStubs {
-
-  @Autowired
-  private ObjectMapper objectMapper;
 
   private static final String ACCOUNTS_PATH = "/api/v2/accounts";
   private static final String TRANSACTION_FEED_PATH = "/api/v2/feed/account/(.*)/category/(.*)/transactions-between";
   private static final String SAVINGS_GOAL_PATH = "/api/v2/account/(.*)/savings-goals/(.*)/add-money/(.*)";
-
+  @Autowired
+  private ObjectMapper objectMapper;
   @Autowired
   private AcceptanceTestContext acceptanceTestContext;
 

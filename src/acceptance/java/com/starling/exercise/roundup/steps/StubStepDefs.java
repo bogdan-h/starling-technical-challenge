@@ -13,6 +13,9 @@ import io.cucumber.datatable.DataTable;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * This class holds the Cucumber steps related to external system dependencies stubbed via WireMock.
+ */
 public class StubStepDefs {
 
   @Autowired

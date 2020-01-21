@@ -18,6 +18,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice("com.starling.exercise.roundup")
 public class ExceptionControllerAdvice extends ResponseEntityExceptionHandler {
 
+  /**
+   * This method overrides Spring's main exception handler. This is required in order to transform the responses that
+   * would be thrown by Spring under the hood and align them to the {@link StarlingOperation} format.
+   */
   @Override
   public ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers,
       HttpStatus status, WebRequest request) {

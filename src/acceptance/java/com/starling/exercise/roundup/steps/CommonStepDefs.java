@@ -21,6 +21,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * This class holds the Cucumber steps related to the system under test. For example, it holds steps that invoke REST
+ * resources and steps that assert on the response received from these REST resources.
+ */
 @SpringAcceptanceTest
 public class CommonStepDefs {
 
