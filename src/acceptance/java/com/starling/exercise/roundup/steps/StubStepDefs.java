@@ -26,6 +26,11 @@ public class StubStepDefs {
     starlingStubs.stubAccounts(status);
   }
 
+  @Given("The Accounts API times out")
+  public void stubAccountsTimeout() {
+    starlingStubs.stubAccountsTimeout();
+  }
+
   @Given("The Transaction Feed API responds with {int}")
   public void stubTransactionFeed(Integer status) throws JsonProcessingException {
     starlingStubs.stubTransactionFeed(status);
@@ -47,6 +52,11 @@ public class StubStepDefs {
     starlingStubs.stubTransactionFeed(feedItems);
   }
 
+  @Given("The Transaction Feed API times out")
+  public void stubTransactionFeedTimeout() {
+    starlingStubs.stubTransactionFeedTimeout();
+  }
+
   @Given("The Savings Goal API responds with {int}")
   public void stubSavingsGoal(Integer status) throws JsonProcessingException {
     starlingStubs.stubSavingsGoal(status);
@@ -55,6 +65,11 @@ public class StubStepDefs {
   @Given("The Savings Goal API responds with error message {string}")
   public void stubSavingsGoalWithFailure(String message) throws JsonProcessingException {
     starlingStubs.stubSavingsGoalWithFailure(message);
+  }
+
+  @Given("The Savings Goal API times out")
+  public void stubSavingsGoalTimeout() {
+    starlingStubs.stubSavingsGoalTimeout();
   }
 
   @Then("The Accounts API has been called correctly")

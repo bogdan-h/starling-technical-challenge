@@ -29,6 +29,30 @@ Feature: Roundup
       | 404                 | 500    | Failed to call Accounts API correctly      |
       | 500                 | 502    | Accounts API failed to fulfill the request |
 
+  Scenario: Should handle Accounts API timeout
+    Given The Accounts API times out
+    And The Transaction Feed API responds with 200
+    And The Savings Goal API responds with 200
+    When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
+    Then The HTTP response status will be 504
+    And The HTTP error message will be 'Accounts API timed out'
+
+  Scenario: Should handle Transaction Feed API timeout
+    Given The Accounts API responds with 200
+    And The Transaction Feed API times out
+    And The Savings Goal API responds with 200
+    When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
+    Then The HTTP response status will be 504
+    And The HTTP error message will be 'Transaction Feed API timed out'
+
+  Scenario: Should handle Savings Goal API timeout
+    Given The Accounts API responds with 200
+    And The Transaction Feed API responds with 200
+    And The Savings Goal API times out
+    When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
+    Then The HTTP response status will be 504
+    And The HTTP error message will be 'Savings Goal API timed out'
+
   Scenario Outline: Should handle Transaction Feed API errors
     Given The Accounts API responds with 200
     And The Transaction Feed API responds with <transaction_feed_api_status>

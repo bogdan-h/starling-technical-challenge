@@ -61,6 +61,10 @@ public class StarlingStubs {
             .withBody(objectMapper.writeValueAsString(accounts)).withStatus(status)));
   }
 
+  public void stubAccountsTimeout() {
+    stubFor(get(urlEqualTo(ACCOUNTS_PATH)).willReturn(aResponse().withFixedDelay(3000)));
+  }
+
   public void verifyTransactionFeed(String minTransactionTimestamp, String maxTransactionTimestamp) {
     final String transactionFeedPath = format(
         "/api/v2/feed/account/%s/category/%s/transactions-between?minTransactionTimestamp=%s&maxTransactionTimestamp=%s",
@@ -81,6 +85,10 @@ public class StarlingStubs {
     stubFor(get(urlPathMatching(TRANSACTION_FEED_PATH))
         .willReturn(aResponse().withHeader("Content-Type", "application/json")
             .withBody(objectMapper.writeValueAsString(feedItems)).withStatus(status)));
+  }
+
+  public void stubTransactionFeedTimeout() {
+    stubFor(get(urlPathMatching(TRANSACTION_FEED_PATH)).willReturn(aResponse().withFixedDelay(3000)));
   }
 
   public void stubTransactionFeed(TransactionFeedItems feedItems) throws JsonProcessingException {
@@ -107,6 +115,10 @@ public class StarlingStubs {
     stubFor(put(urlPathMatching(SAVINGS_GOAL_PATH))
         .willReturn(aResponse().withHeader("Content-Type", "application/json")
             .withBody(objectMapper.writeValueAsString(transferResponse)).withStatus(200)));
+  }
+
+  public void stubSavingsGoalTimeout()  {
+    stubFor(put(urlPathMatching(SAVINGS_GOAL_PATH)).willReturn(aResponse().withFixedDelay(3000)));
   }
 
   public void verifySavingsGoal() {

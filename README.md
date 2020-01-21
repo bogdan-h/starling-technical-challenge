@@ -11,7 +11,7 @@ You can also run and debug all tests (both unit and acceptance) through IntelliJ
 
 # Design
 
-I opted for a REST resource that can be invoked to trigger the round-up. I went for this option as it is more likely that such a feature would be used in this way in reality. I tried to design the resource in line with the current Starling API standards that I found in your Swagger docs at https://developer.starlingbank.com/docs.
+I opted for a REST resource that can be invoked to trigger the round-up. I went for this option as it is more likely that such a feature would be used in this way in reality. I tried to design the resource in line with the current Starling API standards that I found in your Swagger docs at [Starling API Docs](https://developer.starlingbank.com/docs).
 
 Also, I opted to satisfy the `take all the transactions in a given week` requirement by implementing the resource with `minTransactionTimestamp` and `maxTransactionTimestamp` query parameters, such that the resource is similar to the existing `GET /api/v2/feed/account/{accountUid}/category/{categoryUid}/transactions-between` resource. These query parameters are simply passed through to the Feed resource.
 
@@ -42,8 +42,10 @@ In reality, I would probably balance speed vs quality in order to meet product d
 One big feature to finish off the project correctly is to handle currencies. At the moment, I simply pick the currency of the first feed item and use that as the currency for the roundup amount.
 A more correct way will require at least two additional HTTP calls:
 - to get the exchange rates
-- to get the savings goal in order to obtain the currency into which roundup amounts from feed items should calculated into
+- to get the savings goal in order to obtain the currency into which roundup amounts from feed items should be calculated into
 
 I have not implemented this as it would have required considerable more time and it would have mostly been similar work to the work that has been submitted. A performance improvement that could be done is to make 3 concurrent HTTP calls (to accounts, savings goal and exchange rates) as the calls are not dependent on each other.
 
-Since I created a REST resource, the project needs Swagger docs. I would have also implemented this if I had more time, potentially using OpenAPI autogeneration.   
+Since I created a REST resource, the project needs Swagger docs. I would have also implemented this if I had more time, potentially using OpenAPI autogeneration.  
+
+The HTTP clients can be improved via more elaborate fault-tolerance libraries which are becoming more important in a micro-services platform (e.g. [resilience4j](https://github.com/resilience4j/resilience4j), [sentinel](https://github.com/alibaba/Sentinel))
