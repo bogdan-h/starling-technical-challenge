@@ -27,13 +27,13 @@ Therefore, I began the project in a BDD fashion and wrote acceptance tests (as t
 
 Then as I started introducing business logic I introduced unit tests as it is more readable (unit test classes correspond to main test classes) and more concise (testing lots of input cases in a more streamlined way).
 
-I have also retrospectively added `AccountsClientTest` and `AccountsControllerTest` to prove techniques of writing unit tests for controllers and HTTP clients. These are duplicating acceptance tests but I added them just to prove the point. Actually, with these particular two test classes; fundamentally I want them to be unit tests but they can be considered integration tests since the `@RestClientTest(AccountsClient.class)` and `@SpringBootTest` annotations wire a bit more Spring under the hood.
+I have also retrospectively added `AccountsClientTest`, `TransactionFeedClientTest`, `SavingsGoalClientTest` and `AccountsControllerTest` to prove techniques of writing unit tests for controllers and HTTP clients. These are duplicating acceptance tests but I added them just to prove the point. Actually, with these particular two test classes; fundamentally I want them to be unit tests but they can be considered integration tests since the `@RestClientTest(AccountsClient.class)` and `@SpringBootTest` annotations wire a bit more Spring under the hood.
 
 Finally, I performed a manual happy path test on a standalone server against the Starling sandbox environment. (And found out that currencies are mandatory so this test was quite valuable in fact).
 
 # Timeline
 
-The project took me roughly 6-8 hours. I know the guidelines mentioned 2-3 hours, but I really wanted to get the job done well and submit something I am happy about.  Up to 3 hours of this time however has been spent on initial project boilerplate code and additional testing to prove techniques (`AccountsClientTest` and `AccountsControllerTest`).
+The project took me roughly 6-8 hours. I know the guidelines mentioned 2-3 hours, but I really wanted to get the job done well and submit something I am happy about.  Up to 3 hours of this time however has been spent on initial project boilerplate code and additional testing to prove techniques (`AccountsClientTest`, `TransactionFeedClientTest`, `SavingsGoalClientTest` and `AccountsControllerTest`).
 
 In reality, I would probably balance speed vs quality in order to meet product deadlines, or negotiate the deadlines if there is good reason to spend more time on the code.
 
@@ -43,6 +43,8 @@ One big feature to finish off the project correctly is to handle currencies. At 
 A more correct way will require at least two additional HTTP calls:
 - to get the exchange rates
 - to get the savings goal in order to obtain the currency into which roundup amounts from feed items should be calculated into
+
+I would also use Java Currency API instead of hardcoding the currency as a String (e.g. for performing validation of the currency).
 
 I have not implemented this as it would have required considerable more time and it would have mostly been similar work to the work that has been submitted. A performance improvement that could be done is to make 3 concurrent HTTP calls (to accounts, savings goal and exchange rates) as the calls are not dependent on each other.
 

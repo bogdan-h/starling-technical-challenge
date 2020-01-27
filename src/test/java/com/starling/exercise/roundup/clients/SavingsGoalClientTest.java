@@ -1,17 +1,20 @@
 package com.starling.exercise.roundup.clients;
 
+import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -21,10 +24,11 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.starling.exercise.roundup.clients.model.Accounts;
-import com.starling.exercise.roundup.clients.model.Accounts.Account;
+import com.starling.exercise.roundup.clients.model.Amount;
+import com.starling.exercise.roundup.clients.model.SavingsGoalTransfer;
 import com.starling.exercise.roundup.exception.HttpClientServiceException;
-import java.util.List;
+import com.starling.exercise.roundup.web.model.StarlingOperation;
+import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,43 +38,49 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @ExtendWith(SpringExtension.class)
-@RestClientTest(AccountsClient.class)
-class AccountsClientTest {
+@RestClientTest(SavingsGoalClient.class)
+class SavingsGoalClientTest {
 
-  private final Account account = Account.builder().defaultCategory(randomUUID()).build();
-  private final Accounts accounts = Accounts.builder().accounts(List.of(account)).build();
+  private final Amount amount = Amount.builder().currency("GBP").minorUnits(100).build();
+  private final UUID accountUid = randomUUID();
+  private final UUID savingsGoalUid = randomUUID();
+  private final StarlingOperation starlingOperation = StarlingOperation.builder().success(true).build();
   @Autowired
-  private AccountsClient accountsClient;
+  private SavingsGoalClient savingsGoalClient;
   @Autowired
   private MockRestServiceServer mockRestServiceServer;
   @Autowired
   private ObjectMapper objectMapper;
 
   @Test
-  @DisplayName("should call accounts correctly")
+  @DisplayName("should call savings goal correctly")
   void request() throws JsonProcessingException {
-    String accountsString = objectMapper.writeValueAsString(accounts);
-    String accountsUri = "http://localhost/api/v2/accounts";
-    mockRestServiceServer.expect(requestTo(accountsUri))
-        .andExpect(method(GET))
+    String starlingOperationString = objectMapper.writeValueAsString(starlingOperation);
+    SavingsGoalTransfer savingsGoalTransfer = SavingsGoalTransfer.builder().amount(amount).build();
+    String savingsGoalTransferString = objectMapper.writeValueAsString(savingsGoalTransfer);
+    String savingsGoalUri = format("http://localhost/api/v2/account/%s/savings-goals/%s/add-money",
+        accountUid, savingsGoalUid);
+    mockRestServiceServer.expect(requestTo(containsString(savingsGoalUri)))
+        .andExpect(method(PUT))
+        .andExpect(content().string(savingsGoalTransferString))
         .andExpect(header(ACCEPT, APPLICATION_JSON_VALUE))
         .andExpect(header(CONTENT_TYPE, APPLICATION_JSON_VALUE))
         .andExpect(header(AUTHORIZATION, "Bearer mock_token"))
-        .andRespond(withSuccess(accountsString, APPLICATION_JSON));
+        .andRespond(withSuccess(starlingOperationString, APPLICATION_JSON));
 
-    accountsClient.accounts();
+    savingsGoalClient.addMoney(accountUid, savingsGoalUid, amount);
   }
 
   @Test
-  @DisplayName("should return accounts")
+  @DisplayName("should return starling operation")
   void response() throws JsonProcessingException {
-    String accountsString = objectMapper.writeValueAsString(accounts);
+    String starlingOperationString = objectMapper.writeValueAsString(starlingOperation);
     mockRestServiceServer.expect(requestTo(any(String.class)))
-        .andRespond(withSuccess(accountsString, APPLICATION_JSON));
+        .andRespond(withSuccess(starlingOperationString, APPLICATION_JSON));
 
-    Accounts response = accountsClient.accounts();
+    StarlingOperation response = savingsGoalClient.addMoney(accountUid, savingsGoalUid, amount);
 
-    assertThat(response).isEqualTo(accounts);
+    assertThat(response).isEqualTo(starlingOperation);
   }
 
   @Test
@@ -79,10 +89,10 @@ class AccountsClientTest {
     mockRestServiceServer.expect(requestTo(any(String.class))).andRespond(withBadRequest());
 
     HttpClientServiceException exception = assertThrows(HttpClientServiceException.class,
-        () -> accountsClient.accounts());
+        () -> savingsGoalClient.addMoney(accountUid, savingsGoalUid, amount));
 
     assertThat(exception.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
-    assertThat(exception.getMessage()).isEqualTo("Failed to call Accounts API correctly");
+    assertThat(exception.getMessage()).isEqualTo("Failed to call Savings Goal API correctly");
   }
 
   @Test
@@ -91,10 +101,10 @@ class AccountsClientTest {
     mockRestServiceServer.expect(requestTo(any(String.class))).andRespond(withServerError());
 
     HttpClientServiceException exception = assertThrows(HttpClientServiceException.class,
-        () -> accountsClient.accounts());
+        () -> savingsGoalClient.addMoney(accountUid, savingsGoalUid, amount));
 
     assertThat(exception.getStatus()).isEqualTo(BAD_GATEWAY);
-    assertThat(exception.getMessage()).isEqualTo("Accounts API failed to fulfill the request");
+    assertThat(exception.getMessage()).isEqualTo("Savings Goal API failed to fulfill the request");
   }
 
 }
