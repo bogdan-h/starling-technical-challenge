@@ -1,5 +1,7 @@
 package com.starling.exercise.roundup.service;
 
+import static com.starling.exercise.roundup.clients.model.TransactionFeedItems.TransactionFeedItemDirection.IN;
+import static com.starling.exercise.roundup.clients.model.TransactionFeedItems.TransactionFeedItemDirection.OUT;
 import static com.starling.exercise.roundup.service.RoundupFunction.roundup;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +48,10 @@ class RoundupFunctionTest {
   @MethodSource("roundupTestCaseInputProvider")
   void shouldRoundup(List<Integer> amounts, Integer result) {
     final List<TransactionFeedItem> feedItemList = amounts.stream()
-        .map(amount -> TransactionFeedItem.builder().amount(Amount.builder().currency("GBP").minorUnits(amount).build()).build())
+        .map(amount -> TransactionFeedItem.builder()
+            .direction(OUT)
+            .amount(Amount.builder().currency("GBP").minorUnits(amount).build())
+            .build())
         .collect(toList());
 
     final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(feedItemList).build();
@@ -58,10 +63,22 @@ class RoundupFunctionTest {
   @DisplayName("should apply the currency")
   void shouldApplyCurrency() {
     final Amount amount = Amount.builder().currency("GBP").minorUnits(10).build();
-    final TransactionFeedItem feedItem = TransactionFeedItem.builder().amount(amount).build();
+    final TransactionFeedItem feedItem = TransactionFeedItem.builder().direction(OUT).amount(amount).build();
     final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(List.of(feedItem)).build();
 
     assertThat(roundup(feedItems).apply().getCurrency()).isEqualTo("GBP");
+  }
+
+  @Test
+  @DisplayName("should filter on direction")
+  void shouldFilterDirection() {
+    final Amount amount = Amount.builder().currency("GBP").minorUnits(10).build();
+    final TransactionFeedItem feedItem1 = TransactionFeedItem.builder().direction(OUT).amount(amount).build();
+    final TransactionFeedItem feedItem2 = TransactionFeedItem.builder().direction(IN).amount(amount).build();
+    final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(List.of(feedItem1, feedItem2))
+        .build();
+
+    assertThat(roundup(feedItems).apply().getMinorUnits()).isEqualTo(90);
   }
 
 }

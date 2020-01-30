@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.starling.exercise.roundup.clients.model.Amount;
 import com.starling.exercise.roundup.clients.model.TransactionFeedItems;
 import com.starling.exercise.roundup.clients.model.TransactionFeedItems.TransactionFeedItem;
+import com.starling.exercise.roundup.clients.model.TransactionFeedItems.TransactionFeedItemDirection;
 import com.starling.exercise.roundup.stubs.StarlingStubs;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -42,8 +43,9 @@ public class StubStepDefs {
         .map(entry -> {
           Integer amount = Integer.parseInt(entry.get("amount"));
           String currency = entry.get("currency");
+          TransactionFeedItemDirection direction = TransactionFeedItemDirection.valueOf(entry.get("direction"));
           final Amount feedItemAmount = Amount.builder().currency(currency).minorUnits(amount).build();
-          return TransactionFeedItem.builder().amount(feedItemAmount).build();
+          return TransactionFeedItem.builder().direction(direction).amount(feedItemAmount).build();
         })
         .collect(toList());
 

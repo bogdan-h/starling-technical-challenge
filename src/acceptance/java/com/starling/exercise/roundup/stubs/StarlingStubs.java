@@ -10,6 +10,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
+import static com.starling.exercise.roundup.clients.model.TransactionFeedItems.TransactionFeedItemDirection.OUT;
 import static java.lang.String.format;
 import static java.util.UUID.randomUUID;
 
@@ -79,7 +80,7 @@ public class StarlingStubs {
 
   public void stubTransactionFeed(Integer status) throws JsonProcessingException {
     final Amount amount = Amount.builder().minorUnits(1234).build();
-    final TransactionFeedItem feedItem = TransactionFeedItem.builder().amount(amount).build();
+    final TransactionFeedItem feedItem = TransactionFeedItem.builder().direction(OUT).amount(amount).build();
     final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(List.of(feedItem)).build();
 
     stubFor(get(urlPathMatching(TRANSACTION_FEED_PATH))
@@ -117,7 +118,7 @@ public class StarlingStubs {
             .withBody(objectMapper.writeValueAsString(transferResponse)).withStatus(200)));
   }
 
-  public void stubSavingsGoalTimeout()  {
+  public void stubSavingsGoalTimeout() {
     stubFor(put(urlPathMatching(SAVINGS_GOAL_PATH)).willReturn(aResponse().withFixedDelay(3000)));
   }
 

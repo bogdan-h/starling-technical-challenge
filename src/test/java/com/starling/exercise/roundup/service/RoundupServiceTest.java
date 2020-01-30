@@ -1,5 +1,6 @@
 package com.starling.exercise.roundup.service;
 
+import static com.starling.exercise.roundup.clients.model.TransactionFeedItems.TransactionFeedItemDirection.OUT;
 import static java.time.OffsetDateTime.now;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
@@ -36,7 +37,7 @@ class RoundupServiceTest {
   private final UUID defaultCategoryUid = randomUUID();
   private final Account account = Account.builder().defaultCategory(defaultCategoryUid).build();
   private final Amount amount = Amount.builder().minorUnits(75).build();
-  private final TransactionFeedItem feedItem = TransactionFeedItem.builder().amount(amount).build();
+  private final TransactionFeedItem feedItem = TransactionFeedItem.builder().direction(OUT).amount(amount).build();
   private final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(List.of(feedItem)).build();
   private final Amount roundupAmount = Amount.builder().minorUnits(25).build();
   private final OffsetDateTime minTransactionTimestamp = now();

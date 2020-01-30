@@ -1,5 +1,6 @@
 package com.starling.exercise.roundup.clients;
 
+import static com.starling.exercise.roundup.clients.model.TransactionFeedItems.TransactionFeedItemDirection.OUT;
 import static java.lang.String.format;
 import static java.time.OffsetDateTime.now;
 import static java.util.UUID.randomUUID;
@@ -46,7 +47,7 @@ class TransactionFeedClientTest {
   private final UUID categoryUid = randomUUID();
   private final OffsetDateTime minTransactionTimestamp = now();
   private final OffsetDateTime maxTransactionTimestamp = now();
-  private final TransactionFeedItem feedItem = TransactionFeedItem.builder().amount(amount).build();
+  private final TransactionFeedItem feedItem = TransactionFeedItem.builder().direction(OUT).amount(amount).build();
   private final TransactionFeedItems feedItems = TransactionFeedItems.builder().feedItems(List.of(feedItem)).build();
   @Autowired
   private TransactionFeedClient transactionFeedClient;

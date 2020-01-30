@@ -1,6 +1,8 @@
 package com.starling.exercise.roundup.clients.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 
@@ -15,5 +17,15 @@ public class TransactionFeedItems {
   public static class TransactionFeedItem {
 
     private final Amount amount;
+    private final TransactionFeedItemDirection direction;
+  }
+
+  @AllArgsConstructor
+  public enum TransactionFeedItemDirection {
+    IN("IN"),
+    OUT("OUT");
+
+    @JsonValue
+    private final String direction;
   }
 }

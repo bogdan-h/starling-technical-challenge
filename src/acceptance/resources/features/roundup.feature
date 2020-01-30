@@ -95,9 +95,10 @@ Feature: Roundup
   Scenario: Should roundup feed items and add to savings account
     Given The Accounts API responds with 200
     And The Transaction Feed API responds with the following feed items
-      | amount | currency |
-      | 12     | GBP      |
-      | 24     | GBP      |
+      | amount | currency | direction |
+      | 12     | GBP      | OUT       |
+      | 15     | GBP      | IN        |
+      | 24     | GBP      | OUT       |
     And The Savings Goal API responds with 200
     When I invoke the roundup feature on transactions between '2019-01-01T00:00:00.000Z' and '2019-01-02T00:00:00.000Z'
     Then The Savings Goal API has been called correctly with amount 164 of currency 'GBP'
